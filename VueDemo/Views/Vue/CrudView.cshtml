@@ -1,0 +1,145 @@
+﻿@{
+    ViewBag.Title = "CrudView";
+}
+
+<h2>CrudView</h2>
+
+<script src="~/Scripts/vue.js"></script>
+<script src="~/Scripts/vue-resource.min.js"></script>
+
+<div id="app">
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th v-for="col in columnsForTableHeader">{{col}}</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr v-for="item in customers">
+                <td v-for="col in columnsForData">{{item[col]}}</td>
+                <td>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#editModal" v-on:click="bindEditCustomer(item)">
+                        Edit
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal">
+        Create
+    </button>
+    <!-- create modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Create</h5>
+                </div>
+                <div class="modal-body">
+                    <label>Customer Id</label> <input type="text" v-model="newCustomer.customerId" disabled="disabled" />
+                    <br />
+                    <label>Company Name</label>
+                    <input type="text" v-model="newCustomer.companyName" />
+                    <br />
+                    <label>Contact Name</label>
+                    <input type="text" v-model="newCustomer.contactName" />
+                    <br />
+                    <label>Phone</label>
+                    <input type="text" v-model="newCustomer.phone" />
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" v-on:click="createCustomer('createModal')">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- edit modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit</h5>
+                </div>
+                <div class="modal-body">
+                    <label>Customer Id</label> <input type="text" v-model="editCustomer.customerId" disabled="disabled" />
+                    <br />
+                    <label>Company Name</label>
+                    <input type="text" v-model="editCustomer.companyName" />
+                    <br />
+                    <label>Contact Name</label>
+                    <input type="text" v-model="editCustomer.contactName" />
+                    <br />
+                    <label>Phone</label>
+                    <input type="text" v-model="editCustomer.phone" />
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" v-on:click="saveChanges('editModal')">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data: {
+                columnsForData: ['customerId', 'companyName', 'contactName', 'phone'],
+                columnsForTableHeader: ['CustomerId', 'CompanyName', 'contactName', 'phone'],
+                customers: [],
+                newCustomer: { customerId: '', companyName: '', contactName: '', phone: '' },
+                editCustomer: { customerId: '', companyName: '', contactName: '', phone: '' }
+            },
+            created: function () {
+                this.getCustomers()
+            },
+            methods: {
+                createCustomer: function (modalId) {
+                    this.saveCustomer();
+                    this.newCustomer = {};
+                    this.closeModal(modalId);
+                },
+                saveCustomer: function () {
+                    this.customers.push(this.newCustomer);
+                },
+                saveChanges: function (modalId) {
+                    //TODO
+                    this.closeModal(modalId);
+                },
+                bindEditCustomer: function (currentCustomer) {
+                    this.editCustomer = currentCustomer;
+                },
+                getCustomers: function () {
+                    var vm = this; //ref to vue instance
+                    var callback = function (data) {
+                        vm.customers = data;
+                    };
+
+                    $.ajax({
+                        url: "http://211.149.193.19:8080/api/Customers",
+                        type: "GET",
+                        dataType: "jsonp",
+                        success: callback,
+                        error: function (xhr, errorType, error) {
+                            alert(errorType + " , error: " + error);
+                        }
+                    })
+                },
+                closeModal: function (modalId) {
+                    $('#' + modalId).modal('hide');
+                }
+            }
+        })
+    </script>
+}
+

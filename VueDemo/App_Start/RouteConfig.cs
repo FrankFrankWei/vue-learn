@@ -16,7 +16,7 @@ namespace VueDemo
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Vue", action = "SingleView", id = UrlParameter.Optional }
+                defaults: new { controller = "Vue", action = "CrudView", id = UrlParameter.Optional }
             );
         }
     }

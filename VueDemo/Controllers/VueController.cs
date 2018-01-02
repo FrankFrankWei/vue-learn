@@ -24,7 +24,13 @@ namespace VueDemo.Controllers
             return View();
         }
 
+        // get data via jquery ajax
         public ActionResult SingleView()
+        {
+            return View();
+        }
+        // crud via vue-resource
+        public ActionResult CrudView()
         {
             return View();
         }
