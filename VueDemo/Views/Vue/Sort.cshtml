@@ -1,0 +1,72 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Sort</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="filterKey" />
+        <table style="border: 5px solid red">
+            <thead>
+                <tr>
+                    <th><a href="#" v-on:click="sortVia('id')">id</a></th>
+                    <th><a href="#" v-on:click="sortVia('framework')">framework</a></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @*vue 2.0 has remove filter*@
+                @*<tr v-for="item in frameworks | filterBy filterKey | orderBy sortParam order">*@
+                <tr v-for="item in frameworks">
+                    <td>{{item.id}}</td>
+                    <td>{{item.framework}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data: {
+                sortParam: '',
+                filterKey: '',
+                order: 1,
+
+                frameworks: [
+            { id: '01', framework: 'angular' },
+            { id: '02', framework: 'd3' },
+            { id: '03', framework: 'node' },
+            { id: '04', framework: 'jquery' },
+            { id: '05', framework: 'reveal.js' },
+            { id: '06', framework: 'impress.js' },
+            { id: '07', framework: 'backbone.js' },
+            { id: '08', framework: 'meteor.js' },
+            { id: '09', framework: 'express' },
+            { id: '10', framework: 'moment' },
+            { id: '11', framework: 'underscore' },
+            { id: '12', framework: 'gulp' },
+            { id: '13', framework: 'react' },
+            { id: '14', framework: 'ghost' },
+            { id: '15', framework: 'sweetalert' },
+            { id: '16', framework: 'select2' }
+                ]
+            },
+            methods: {
+                sortVia: function (sortParam, order) {
+                    this.order = this.order * -1; // get opposite
+                    this.sortParam = sortParam;
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

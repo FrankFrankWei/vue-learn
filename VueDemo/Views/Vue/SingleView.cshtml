@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "SingleView";
+}
+
+<h2>SingleView</h2>
+
+<script src="~/Scripts/vue.js"></script>
+
+<div id="app">
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th v-for="col in columnsForTableHeader">{{col}}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr v-for="item in customers">
+                <td v-for="col in columnsForData">{{item[col]}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="container">
+        <div class="form-group">
+            <button v-on:click="showCreateDialog()">Create</button>
+        </div>
+    </div>
+
+
+    <div v-show="showCreate">
+        <label>Customer Id</label>
+        <input type="text" v-model="newCustomer.customerId" disabled="disabled" />
+        <br />
+        <label>Company Name</label>
+        <input type="text" v-model="newCustomer.companyName" />
+        <br />
+        <label>Contact Name</label>
+        <input type="text" v-model="newCustomer.contactName" />
+        <br />
+        <label>Phone</label>
+        <input type="text" v-model="newCustomer.phone" />
+        <br />
+        <input type="button" value="Save" v-on:click="createCustomer" />
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data: {
+                columnsForData: ['customerId', 'companyName', 'contactName', 'phone'],
+                columnsForTableHeader: ['CustomerId', 'CompanyName', 'contactName', 'phone'],
+                customers: [],
+                showCreate: false,
+                newCustomer: { customerId: '', companyName: '', contactName: '', phone: '' }
+            },
+            created: function () {
+                this.getCustomers()
+            },
+            methods: {
+                createCustomer: function () {
+                    this.customers.push(this.newCustomer);
+                    this.newCustomer = {};
+                    this.showCreate = false;
+                },
+                showCreateDialog: function () {
+                    return this.showCreate = true;
+                },
+                getCustomers: function () {
+                    var vm = this; //ref to vue instance
+                    var callback = function (data) {
+                        vm.customers = data;
+                    };
+
+                    $.ajax({
+                        url: "http://211.149.193.19:8080/api/Customers",
+                        type: "GET",
+                        dataType: "jsonp",
+                        success: callback,
+                        error: function (xhr, errorType, error) {
+                            alert(errorType + " , error: " + error);
+                        }
+                    })
+                }
+            }
+        })
+    </script>
+}

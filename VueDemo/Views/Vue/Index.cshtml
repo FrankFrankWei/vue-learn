@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script type="text/javascript">
+        var vueModel = new Vue({
+            el: '#app',
+            data: {
+                msg: 'hello Vue.',
+                men: ['frank', 'john', 'mike', 'lucy'],
+                newMan:''
+            },
+            methods: {
+                addMan: function () {
+                    this.men.push(this.newMan);
+                    this.newMan = ''
+                },
+
+                deleteMan: function () {
+                    this.men = []
+                }
+            }
+        })
+
+    </script>
+
+}
+
+<br />
+
+<div id="app">
+    <input v-model="msg" placeholder="edit me" />
+    <br />
+    v-model: {{msg}}
+
+    <br />
+
+    <hr />
+    v-for:
+    <ul>
+        <li v-for="item in men" class="active">
+            <a href="#">{{item}}</a>
+        </li>
+    </ul>
+    <hr />
+    add man:
+    <br />
+    <input type="text" placeholder="name" v-model="newMan" />
+    <input type="button" v-on:click="addMan()" value="Add"/>
+    &nbsp;&nbsp;
+    <input type="button" v-on:click="deleteMan()"  value="Delete All"/>
+
+    <hr />
+</div>
+
