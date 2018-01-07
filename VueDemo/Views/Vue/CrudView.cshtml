@@ -6,6 +6,8 @@
 
 <script src="~/Scripts/vue.js"></script>
 <script src="~/Scripts/vue-resource.min.js"></script>
+<script src="~/Scripts/ajaxHelper.js"></script>
+<script src="~/Scripts/zepto.js"></script>
 
 <div id="app">
     <table class="table table-bordered table-hover table-responsive">
@@ -33,13 +35,15 @@
     </button>
     <!-- create modal -->
     <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+        <form method="post" id="myForm">
+
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createModalLabel">Create</h5>
                 </div>
                 <div class="modal-body">
-                    <label>Customer Id</label> <input type="text" v-model="newCustomer.customerId" disabled="disabled" />
+                    <label>Customer Id</label> <input type="text" v-model="newCustomer.customerId" />
                     <br />
                     <label>Company Name</label>
                     <input type="text" v-model="newCustomer.companyName" />
@@ -57,6 +61,7 @@
                 </div>
             </div>
         </div>
+        </form>
     </div>
 
     <!-- edit modal -->
@@ -91,9 +96,12 @@
 
 @section scripts{
     <script type="text/javascript">
+        var ajaxHelper = new AjaxHelper()
+
         new Vue({
             el: '#app',
             data: {
+                url: "http://211.149.193.19:8080/api/Customers",
                 columnsForData: ['customerId', 'companyName', 'contactName', 'phone'],
                 columnsForTableHeader: ['CustomerId', 'CompanyName', 'contactName', 'phone'],
                 customers: [],
@@ -105,12 +113,31 @@
             },
             methods: {
                 createCustomer: function (modalId) {
-                    this.saveCustomer();
+                    this.saveNewCustomer();
                     this.newCustomer = {};
                     this.closeModal(modalId);
                 },
-                saveCustomer: function () {
-                    this.customers.push(this.newCustomer);
+                saveNewCustomer: function () {
+                    // push and get data again
+                    //this.customers.push(this.newCustomer);
+                    var vm2 = this;
+                    var callback2 = function () {
+                        vm2.getCustomers();
+                    };
+
+                    $.ajax({
+                        url: "http://211.149.193.19:8080/api/customers",
+                        type: "POST",
+                        //data: JSON.stringify(this.newCustomer),
+                        data: vm2.newCustomer,
+                        dataType: "json",
+                        crossDomain: true,
+                        //headers: { "Access-Control-Allow-Origin": "*" },
+                        success: callback2,
+                        error: function (xhr, errorType, error) {
+                            alert(errorType + " , error: " + error);
+                        }
+                    })
                 },
                 saveChanges: function (modalId) {
                     //TODO
